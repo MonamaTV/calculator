@@ -26,7 +26,8 @@ textarea {
 
 main {
   max-width: 80%;
-  margin: 0 auto;
+  max-height: 80%;
+  margin: auto;
   padding: 20px;
 }
 
@@ -51,6 +52,32 @@ main {
   border: 1px solid gray;
   margin: 3px;
   height: 55px;
-  background: #92dccb14;
+  background: #0308036f;
   padding: 15px;
+  font-weight: 600;
+}
+
+button.del {
+  color: red;
+  background: rgb(255, 243, 243);
+  border: 1px solid rgb(252, 230, 230);
+}
+
+button.ac {
+  color: red;
+  background: rgb(243, 243, 255);
+  border: 1px solid rgb(252, 230, 230);
+}
+
+.calculator .num-pad:nth-child(n + 2) button:nth-child(-n + 3) {
+  background: #8fb37a;
+}
+
+.calculator .num-pad:nth-child(1) button:nth-child(-n + 3),
+.calculator .num-pad:nth-child(n + 1) button:nth-child(4) {
+  background: #ccffaf;
+}
+
+button:hover {
+  background: #8a9d7f;
 }
