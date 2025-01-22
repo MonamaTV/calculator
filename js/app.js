@@ -8,6 +8,16 @@ const isNumber = (value) => {
   }
 };
 
+const factorial = (n) => {
+  if (n === 0) {
+    return 1;
+  }
+  return n * factorial(n - 1);
+};
+
+const isTrigFunction = (value) => "sin cos tan ln log".includes(value);
+const isSingleOperandOperator = (value) => "!%".includes(value);
+
 const handleEqual = (expression) => {
   try {
     const operators = [];
@@ -17,31 +27,30 @@ const handleEqual = (expression) => {
       if (part.trim() === "") {
         continue;
       }
-      if ("+-*/sqrtx^2x^ysincostanlogln".includes(part)) {
+      if ("+-*/sqrtx^2x^y%!".includes(part) || isTrigFunction(part)) {
         operators.push(part.trim());
       } else if (isNumber(part)) {
         operands.push(parseFloat(part.trim()));
       }
 
       while (operators.length !== 0 && operands.length >= 2) {
-        const operator = operators.pop();
-        const b = operands.pop();
+        const operator = operators.shift();
+        const b = operands.shift();
         let a;
-        console.log(operator);
 
-        if (!"sincostanlogln".includes(operator)) {
+        if (!isTrigFunction(operator)) {
           a = operands.pop();
         }
-        console.log(a, b);
-        const res = compute(operator, a, b);
+        console.log(a, b, operator);
+        const res = compute(operator, b, a);
         console.log({ res });
         operands.push(res);
       }
     }
 
     if (operands.length === 1 && operators.length === 1) {
-      const operator = operators.pop();
-      const operand = operands.pop();
+      const operator = operators.shift();
+      const operand = operands.shift();
       const res = compute(operator, operand, 0);
       operands.push(res);
     }
@@ -64,6 +73,10 @@ const compute = (operator, operandA, operandB) => {
   if (operator === "tan") {
     return Math.tan(operandA);
   }
+  if (operator === "log") {
+    return Math.log(operandA);
+  }
+
   if (operator === "+") {
     return operandA + operandB;
   }
@@ -81,6 +94,12 @@ const compute = (operator, operandA, operandB) => {
   }
   if (operator === "x^2") {
     return Math.pow(operandA, 2);
+  }
+  if (operator === "%") {
+    return operandA / 100;
+  }
+  if (operator === "!") {
+    return factorial(operandA);
   }
 };
 
@@ -100,7 +119,7 @@ const handleButtonClick = (event) => {
     if (display.value.length !== 0) {
       display.value += " " + display.textContent + " ^ ( ";
     }
-  } else if (" sin cos tan log ln".includes(input)) {
+  } else if (isTrigFunction(input)) {
     if (display.value.length !== 0) {
       display.value += " * " + input + " ( " + display.textContent;
     } else {
