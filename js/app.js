@@ -15,7 +15,7 @@ const factorial = (n) => {
   return n * factorial(n - 1);
 };
 
-const isTrigFunction = (value) => "sin cos tan ln log".includes(value);
+const isTrigFunction = (value) => "sin cos tan ln log sqrt".includes(value);
 const isSingleOperandOperator = (value) => "!%".includes(value);
 
 const handleEqual = (expression) => {
@@ -27,6 +27,7 @@ const handleEqual = (expression) => {
       if (part.trim() === "") {
         continue;
       }
+      console.log(part);
       if ("+-*/sqrtx^2x^y%!".includes(part) || isTrigFunction(part)) {
         operators.push(part.trim());
       } else if (isNumber(part)) {
@@ -47,7 +48,7 @@ const handleEqual = (expression) => {
         operands.push(res);
       }
     }
-
+    console.log(operands, operators);
     if (operands.length === 1 && operators.length === 1) {
       const operator = operators.shift();
       const operand = operands.shift();
@@ -76,7 +77,6 @@ const compute = (operator, operandA, operandB) => {
   if (operator === "log") {
     return Math.log(operandA);
   }
-
   if (operator === "+") {
     return operandA + operandB;
   }
@@ -120,7 +120,10 @@ const handleButtonClick = (event) => {
       display.value += " " + display.textContent + " ^ ( ";
     }
   } else if (isTrigFunction(input)) {
-    if (display.value.length !== 0) {
+    if (
+      display.value.length !== 0 &&
+      display.value[display.value.length - 1] !== " "
+    ) {
       display.value += " * " + input + " ( " + display.textContent;
     } else {
       display.value += input + " ( " + display.textContent;
