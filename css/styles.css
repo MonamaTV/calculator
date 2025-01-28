@@ -88,9 +88,11 @@ button:hover {
   }
   .calculator {
     flex-direction: column;
-    /* width: 100vw; */
   }
   .calculator > div {
     width: 100%;
+  }
+  textarea {
+    height: 200px;
   }
 }
