@@ -1,5 +1,5 @@
 const display = document.querySelector("#display");
-
+let prevAnswer = 0;
 const isNumber = (value) => {
   try {
     return !isNaN(parseFloat(value));
@@ -9,13 +9,16 @@ const isNumber = (value) => {
 };
 
 const factorial = (n) => {
+  if (n < 0) {
+    throw new Error("Factorial of negative number is not defined");
+  }
   if (n === 0) {
     return 1;
   }
   return n * factorial(n - 1);
 };
 
-const isTrigFunction = (value) => "sin cos tan ln log sqrt".includes(value);
+const isTrigFunction = (value) => "sin cos tan ln log sqrt e".includes(value);
 const isSingleOperandOperator = (value) => "!%".includes(value);
 
 const handleEqual = (expression) => {
@@ -28,7 +31,7 @@ const handleEqual = (expression) => {
         continue;
       }
       const isTrig = isTrigFunction(part);
-      if ("+-*/sqrtx^2x^y%!".includes(part) || isTrig) {
+      if ("+-*/sqrt^%!".includes(part) || isTrig) {
         operators.push(part.trim());
       } else if (isNumber(part)) {
         operands.push(parseFloat(part.trim()));
@@ -83,6 +86,9 @@ const compute = (operator, operandA, operandB) => {
   if (operator === "ln") {
     return Math.round(Math.log(operandA));
   }
+  if (operator === "e") {
+    return Math.E;
+  }
   if (operator === "+") {
     return operandA + operandB;
   }
@@ -98,8 +104,8 @@ const compute = (operator, operandA, operandB) => {
     }
     return operandA / operandB;
   }
-  if (operator === "x^2") {
-    return Math.pow(operandA, 2);
+  if (operator === "^") {
+    return Math.pow(operandB, operandA);
   }
   if (operator === "%") {
     return operandA / 100;
@@ -119,11 +125,11 @@ const handleButtonClick = (event) => {
     display.value += input + " ( " + display.textContent;
   } else if ("x^2" === input) {
     if (display.value.length !== 0) {
-      display.value += " * " + display.textContent + " ^ ( 2 )";
+      display.value += "" + display.textContent + " ^ ( 2 )";
     }
   } else if ("x^y" === input) {
     if (display.value.length !== 0) {
-      display.value += " " + display.textContent + " ^ ( ";
+      display.value += "" + display.textContent + " ^ ( ";
     }
   } else if (isTrigFunction(input)) {
     if (
@@ -140,8 +146,12 @@ const handleButtonClick = (event) => {
     display.value = display.value.slice(0, -1);
   } else if ("ac" === input) {
     display.value = "";
+  } else if ("ans" === input) {
+    display.value += prevAnswer;
   } else if (input === "=") {
-    display.value = handleEqual(display.value);
+    const answer = handleEqual(display.value);
+    prevAnswer = answer;
+    display.value = answer;
   }
 };
 
