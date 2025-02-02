@@ -27,28 +27,28 @@ const handleEqual = (expression) => {
       if (part.trim() === "") {
         continue;
       }
-      console.log(part);
-      if ("+-*/sqrtx^2x^y%!".includes(part) || isTrigFunction(part)) {
+      const isTrig = isTrigFunction(part);
+      if ("+-*/sqrtx^2x^y%!".includes(part) || isTrig) {
         operators.push(part.trim());
       } else if (isNumber(part)) {
         operands.push(parseFloat(part.trim()));
       }
 
-      while (operators.length !== 0 && operands.length >= 2) {
-        const operator = operators.shift();
-        const b = operands.shift();
-        let a;
-
-        if (!isTrigFunction(operator)) {
-          a = operands.pop();
-        }
-        console.log(a, b, operator);
-        const res = compute(operator, b, a);
-        console.log({ res });
+      if (isTrig && operands.length !== 0) {
+        const operator = operators.pop();
+        const b = operands.pop();
+        const res = compute(operator, b, 0);
         operands.push(res);
+      } else {
+        while (operators.length !== 0 && operands.length >= 2) {
+          const operator = operators.pop();
+          const b = operands.pop();
+          const a = operands.pop();
+          const res = compute(operator, b, a);
+          operands.push(res);
+        }
       }
     }
-    console.log(operands, operators);
     if (operands.length === 1 && operators.length === 1) {
       const operator = operators.shift();
       const operand = operands.shift();
@@ -62,20 +62,26 @@ const handleEqual = (expression) => {
 };
 
 const compute = (operator, operandA, operandB) => {
+  if (operator === "pie") {
+    return Math.PI;
+  }
   if (operator === "sqrt") {
     return Math.sqrt(operandA);
   }
   if (operator === "sin") {
-    return Math.sin(operandA);
+    return Math.round(Math.sin((operandA * Math.PI) / 180));
   }
   if (operator === "cos") {
-    return Math.cos(operandA);
+    return Math.round(Math.cos((operandA * Math.PI) / 180));
   }
   if (operator === "tan") {
-    return Math.tan(operandA);
+    return Math.round(Math.tan((operandA * Math.PI) / 180));
   }
   if (operator === "log") {
-    return Math.log(operandA);
+    return Math.round(Math.log10(operandA));
+  }
+  if (operator === "ln") {
+    return Math.round(Math.log(operandA));
   }
   if (operator === "+") {
     return operandA + operandB;
@@ -128,6 +134,8 @@ const handleButtonClick = (event) => {
     } else {
       display.value += input + " ( " + display.textContent;
     }
+  } else if ("pie" === input) {
+    display.value += Math.PI;
   } else if ("del" === input) {
     display.value = display.value.slice(0, -1);
   } else if ("ac" === input) {

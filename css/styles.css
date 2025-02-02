@@ -21,6 +21,7 @@ textarea {
   padding: 10px;
   font-size: 45px;
   outline: none;
+  user-select: none;
   border: 1px solid gray;
 }
 
